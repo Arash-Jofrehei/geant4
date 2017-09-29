@@ -8,7 +8,7 @@
 #include <TChain.h>
 #include <TFile.h>
 
-#include "DrawTools.h"
+//#include "DrawTools.h"
 #include "TCanvas.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -35,7 +35,7 @@ float getRatioError( float num, float denom, float numErr, float denomErr ) {
 
 int main( int argc, char* argv[] ) {
 
-  DrawTools::setStyle();
+  //DrawTools::setStyle();
 
   std::string setup = "WLS";
   std::string energy = "50GeV";

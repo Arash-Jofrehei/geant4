@@ -127,6 +127,10 @@ void EEShashPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //float x = rand_->Uniform( 0., 30.0 );
   //float y = rand_->Uniform( 0., 30.0 );
 
+  // Unsmeared beam position (position center):
+  x = 0.0;
+  y = 0.0;
+
 
   G4double xBeam = x*mm;
   G4double yBeam = y*mm;
@@ -153,9 +157,6 @@ void EEShashPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       yPos = 11.304
   */
 
-  // Unsmeared beam position (position center):
-  //  G4double xBeam = 0.0;
-  //  G4double yBeam = 0.0;
 
   // Position 0 <-- Confirmed correct, lower right corner viewed from front
   //G4double xBeam = -11.304;

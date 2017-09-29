@@ -8,7 +8,7 @@ class FFTConvolution : public WaveformNew
 {
 
  public:
-  WaveformNew* fftConvolute(WaveformNew*  wave1, WaveformNew*  wave2);//convolution of two waveforms using fft  
+  WaveformNew* fftConvolute(WaveformNew*  wave1, WaveformNew*  wave2, bool con = true);//convolution of two waveforms using fft  
   Double_t*  sampleWaveform(WaveformNew*  wave, int N,int NBuf,int N2,int& zeroBin);//performs needed operation for fft: buffer zones, time shifting....
 
   Double_t bufferFraction() const { 

@@ -1,4 +1,3 @@
-//
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -511,7 +510,9 @@ void EEShashDetectorConstruction::DefineMaterials()
  // mptCeF->AddProperty ("RINDEX", PhotonEnergy_RI, refractiveIndex_CeF3, nEntries_RI)->SetSpline(true);
  //mptCeF->AddProperty ("ABSLENGTH", PhotonEnergy_ABS, Absorption, nEntries_ABS);
  
- mptCeF->AddConstProperty ("SCINTILLATIONYIELD", 1000./MeV);//this should be 1000./MeV 
+ // mptCeF->AddConstProperty ("SCINTILLATIONYIELD", 1000./MeV);//this should be 1000./MeV 
+ //test
+ mptCeF->AddConstProperty ("SCINTILLATIONYIELD", 6./MeV);//this should be 1000./MeV 
  mptCeF->AddConstProperty ("RESOLUTIONSCALE", 1);
  // mptCeF->AddConstProperty ("RESOLUTIONSCALE", 2.58);
  mptCeF->AddConstProperty ("FASTTIMECONSTANT", 32.5 *ns);
@@ -607,12 +608,59 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
   G4double hodoLength = 4.*mm;
   G4double hodoDistance = 30.*mm;
 
+  //Starting from the Calobox
+  //Scintillator 3 
+  G4double scint3SizeXY = 50.*mm;
+  G4double scint3Length = 10.*mm;
+  G4double scint3Distance = 2950.*mm;
+
+
+  // Hodoscope 11 
+  G4double hodo21Distance = (3000+1400+140+640.+110.+190.+130.)*mm;
+  //Hodoscope 12
+  G4double hodo22Distance = (3000+1400+140+640.+110.+190.+130+350.)*mm;
+
+
+  //The group of 3 scintillators
+  //Scint 21
+  G4double scint21SizeXY = 50.*mm;
+  G4double scint21Length = 5.*mm;
+  G4double scint21Distance = (3000+1400+140+640.)*mm;
+  //Scint 22 Tiny little scint
+  G4double scint22SizeXY = 10.*mm;
+  G4double scint22Length = 1.*mm;
+  G4double scint22Distance = (3000+1400+140+640.+110.)*mm;
+  //Scint 23 
+  G4double scint23SizeXY = 30.*mm;
+  G4double scint23Length = 3.*mm;
+  G4double scint23Distance = (3000+1400+140+640.+110.+190.)*mm;
+
+  //Last (or first hodo from beam) hodoscope? It's a scintillator, not readout
+  G4double hodo31SizeXY = 100.*mm;
+  G4double hodo31Length = 5.*mm;
+  G4double hodo31Distance = (3000+1400+140+640.+110.+190.+350.+530.+90.)*mm;  
+  G4double hodo32Distance = (3000+1400+140+640.+110.+190.+350.+530.+90.+1.+5.)*mm;
+
+ //Scintillator X (weird roundish on top, approxed as square) 
+  G4double scintXSizeXY = 50.*mm;
+  G4double scintXLength = 4.*mm;
+  G4double scintXDistance = (3000+1400+140+640.+110.+190.+130+350.+530.+1400.+1220.)*mm;
+
+  // Hodoscope 21 
+  G4double hodo11SizeXY = 30.*mm;
+  G4double hodo11Length = 2.*mm;
+  G4double hodo11Distance = 3130.*mm;
+  //Hodoscope 22
+  G4double hodo12Distance = 3490.*mm;
+
+
+
   // world:
-  //G4double worldSizeXY = 20. * (5.*calorSizeXY);
-  //G4double worldSizeZ  = 100. * (fibreLength); 
-  G4double worldSizeXY = 5 * (3.*calorSizeXY);
+  G4double worldSizeXY = 20. * (5.*calorSizeXY);
+  G4double worldSizeZ  = 100. * (fibreLength); 
+  // G4double worldSizeXY = 5 * (3.*calorSizeXY);
+  //  G4double worldSizeZ = 5. * (fibreLength); 
   //  G4double worldSizeXY = 1.2 * (3.*calorSizeXY);
-  G4double worldSizeZ = 5. * (fibreLength); 
   //  G4double worldSizeZ = 2. * (fibreLength); 
   
   // Get materials
@@ -625,7 +673,7 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
   G4Material* fibreCoreMaterial  = G4Material::GetMaterial("Polystyrene");
   G4Material* fibreCladMaterial  = G4Material::GetMaterial("PMMA");
 
-  //  G4Material* scintMaterial = G4Material::GetMaterial("PMMA");
+  G4Material* scintMaterial = G4Material::GetMaterial("PMMA");
   G4Material* hodoMaterial    = G4Material::GetMaterial("PMMA");
   G4Material* pompomMaterial = G4Material::GetMaterial("POM");
   G4Material* tyvekMaterial = G4Material::GetMaterial("HDPE");
@@ -749,13 +797,30 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
         G4TwoVector(0.,0.), 1.);
   //= new G4Box("Calorimeter",     // its name
   //             calorSizeXY/2, calorSizeXY/2, calorThickness/2); // its size
-                         
+
+  //this is the 3x3 matrix around the central channel                         
   G4LogicalVolume* calorLV
     = new G4LogicalVolume(
                  calorimeterS,     // its solid
                  defaultMaterial,  // its material
                  "Calorimeter");   // its name
+
+  //single channel for which we want a different collection of hits
+  G4LogicalVolume* calorLV2
+    = new G4LogicalVolume(
+                 calorimeterS,     // its solid
+                 defaultMaterial,  // its material
+                 "Calorimeter2");   // its name
+
+  //remaining channels (aka the three channels on the left)
+  G4LogicalVolume* calorLV3
+    = new G4LogicalVolume(
+                 calorimeterS,     // its solid
+                 defaultMaterial,  // its material
+                 "Calorimeter3");   // its name
     
+
+
                              
   new G4PVPlacement(
                  rotation,                // no rotation
@@ -766,6 +831,7 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
+
    
   //                                 
   // Layer
@@ -793,6 +859,41 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
                  kZAxis,           // axis of replication
                  fNofLayers,        // number of replica
                  layerThickness);  // width of replica
+
+
+  //central channel
+  G4LogicalVolume* layerLV2
+    = new G4LogicalVolume(
+                 layerS,           // its solid
+                 defaultMaterial,  // its material
+                 "Layer");         // its name
+
+  new G4PVReplica(
+                 "Layer",          // its name
+                 layerLV2,          // its logical volume
+                 calorLV2,          // its mother
+                 kZAxis,           // axis of replication
+                 fNofLayers,        // number of replica
+                 layerThickness);  // width of replica
+
+
+  //remaining channels (aka the three channels on the left)
+  G4LogicalVolume* layerLV3
+    = new G4LogicalVolume(
+                 layerS,           // its solid
+                 defaultMaterial,  // its material
+                 "Layer");         // its name
+
+  new G4PVReplica(
+                 "Layer",          // its name
+                 layerLV3,          // its logical volume
+                 calorLV3,          // its mother
+                 kZAxis,           // axis of replication
+                 fNofLayers,        // number of replica
+                 layerThickness);  // width of replica
+
+
+
   
   //                               
   // Absorber
@@ -821,6 +922,42 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
+   //central channel
+  G4LogicalVolume* absLV2
+    = new G4LogicalVolume(
+                 absS,        // its solid
+                 absMaterial, // its material
+                 "AbsLV2");        // its name
+                                   
+   new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0., -actThickness/2 -tyvekThickness), // its position
+                 absLV2,       // its logical volume                         
+                 "Abs2",           // its name
+                 layerLV2,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+
+
+  //remaining channels (aka the three channels on the left)
+  G4LogicalVolume* absLV3
+    = new G4LogicalVolume(
+                 absS,        // its solid
+                 absMaterial, // its material
+                 "AbsLV3");        // its name
+                                   
+   new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0., -actThickness/2 -tyvekThickness), // its position
+                 absLV3,       // its logical volume                         
+                 "Abs3",           // its name
+                 layerLV3,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+
+
 
   //                               
   // Active Material
@@ -833,15 +970,14 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
         G4TwoVector(0.,0.), 1.);
   //= new G4Box("Act",             // its name
   //             calorSizeXY/2, calorSizeXY/2, actThickness/2); // its size
-                         
+
+  //this is the 3x3 matrix around the central channel
   G4LogicalVolume* actLV
     = new G4LogicalVolume(
                  actS,             // its solid
                  actMaterial,      // its material
                  "ActLV");         // its name
-   
- 
-  
+
  G4VPhysicalVolume* ActPV = new G4PVPlacement(
                  0,                // no rotation
                  G4ThreeVector(0., 0., absThickness/2.), // its position
@@ -851,6 +987,46 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
+
+
+  //central channel
+  G4LogicalVolume* actLV2
+    = new G4LogicalVolume(
+                 actS,             // its solid
+                 actMaterial,      // its material
+                 "ActLV2");         // its name
+
+ G4VPhysicalVolume* ActPV2 = new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0., absThickness/2.), // its position
+                 actLV2,            // its logical volume                         
+                 "ActPV2",            // its name
+                 layerLV2,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+
+
+
+   
+  //remaining channels (aka the three channels on the left)
+ 
+  G4LogicalVolume* actLV3
+    = new G4LogicalVolume(
+                 actS,             // its solid
+                 actMaterial,      // its material
+                 "ActLV3");         // its name
+
+ G4VPhysicalVolume* ActPV3 = new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0., absThickness/2.), // its position
+                 actLV3,            // its logical volume                         
+                 "ActPV3",            // its name
+                 layerLV3,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+  
 
 
   //                               
@@ -891,6 +1067,50 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
                  false,            // no boolean operation
                  0,                // copy number
                  fCheckOverlaps);  // checking overlaps 
+  //central channel
+  G4VPhysicalVolume* TyvekLayerPV1_2 = new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0., actThickness/2.+absThickness/2. + tyvekThickness/2.), // its position
+                 tyvekLV,            // its logical volume                         
+                 "TyvekLayerPV1_2",            // its name
+                 layerLV2,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+
+
+  G4VPhysicalVolume* TyvekLayerPV2_2 =   new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0.,  (absThickness-actThickness)/2. +tyvekThickness/2. -tyvekThickness), // its position
+                 tyvekLV,            // its logical volume                         
+                 "TyvekLayerPV2_2",            // its name
+                 layerLV2,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+
+  //remaining channels (aka the three channels on the left)
+  G4VPhysicalVolume* TyvekLayerPV1_3 = new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0., actThickness/2.+absThickness/2. + tyvekThickness/2.), // its position
+                 tyvekLV,            // its logical volume                         
+                 "TyvekLayerPV1_3",            // its name
+                 layerLV3,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+
+
+  G4VPhysicalVolume* TyvekLayerPV2_3 =   new G4PVPlacement(
+                 0,                // no rotation
+                 G4ThreeVector(0., 0.,  (absThickness-actThickness)/2. +tyvekThickness/2. -tyvekThickness), // its position
+                 tyvekLV,            // its logical volume                         
+                 "TyvekLayerPV2_3",            // its name
+                 layerLV3,          // its mother  volume
+                 false,            // no boolean operation
+                 0,                // copy number
+                 fCheckOverlaps);  // checking overlaps 
+
 
 
   //Optical Grease at end of fibre:
@@ -996,7 +1216,7 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
   int cathodeCopy = 0;
 
 
-  for( int ix=-1; ix<=1; ix+=2 ) {
+  for( int ix=-2; ix<=1; ix+=2 ) {
     for( int iy=-1; iy<=1; iy+=2 ) {
 
       if(fibreCopy<nFibres){
@@ -1147,6 +1367,8 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
                      fCheckOverlaps);  // checking overlaps 
 
 
+
+
   //
   // Hodoscope 
   //
@@ -1289,9 +1511,9 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
          << actThickness/mm << "mm of " << actMaterial->GetName() << " ] " 
          << "\n------------------------------------------------------------\n";
 
-  /*
+  
 
-
+  
   //
   //Scintillators 3
   //
@@ -1517,9 +1739,9 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
                      0,                // copy number
                      fCheckOverlaps);  // checking overlaps 
 
+  
 
-
-  */
+  
 
 
   //                                        
@@ -1533,10 +1755,18 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
   G4VisAttributes* grayBox= new G4VisAttributes(G4Colour(0.5,0.5,0.5));
   grayBox->SetForceSolid(true);
   absLV->SetVisAttributes(grayBox);
+  //central channel
+  absLV2->SetVisAttributes(grayBox);
+  //remaining channels (aka the three channels on the left)
+  absLV3->SetVisAttributes(grayBox);
 
   G4VisAttributes* cyanBox= new G4VisAttributes(G4Colour(0,255,255));
   cyanBox->SetForceSolid(true);
   actLV->SetVisAttributes(cyanBox);
+
+  //central channel
+  actLV2->SetVisAttributes(cyanBox);
+  actLV3->SetVisAttributes(cyanBox);
 
   G4VisAttributes* magentaBox= new G4VisAttributes(G4Colour(255,0,0));
   magentaBox->SetForceSolid(true);
@@ -1591,58 +1821,155 @@ G4VPhysicalVolume* EEShashDetectorConstruction::DefineVolumes()
 
   // create the matrix:
 
-  int copyNumber = 0;
-  int totalCopies = fNofBGOs;
+//  int copyNumber = 0;
+//  int totalCopies = fNofBGOs;
 
   G4VSolid* bgoS 
      = new G4Box("BGOChannel",     // its name
                 calorSizeXY/2, calorSizeXY/2, bgoLength/2); // its size
                          
-  G4LogicalVolume* bgoLV 
-     = new G4LogicalVolume(
-                bgoS,     // its solid
-                bgoMaterial,  // its material
-                "BGOLV");   // its name
-
-  bgoLV->SetVisAttributes(simpleBoxVisAtt);
+//  G4LogicalVolume* bgoLV 
+//     = new G4LogicalVolume(
+//                bgoS,     // its solid
+//                bgoMaterial,  // its material
+//                "BGOLV");   // its name
+//
+//  bgoLV->SetVisAttributes(simpleBoxVisAtt);
                                        
 
+//  for( int ix=-2; ix<=2; ++ix ) {
+//
+//    for( int iy=-2; iy<=2; ++iy ) {
+//
+//
+//      if( ix==0 && iy==0 ) continue;  // central channel is the shash
+//
+//      if( copyNumber>=totalCopies ) {
+//        std::cout << "--> ERROR!! Trying to instantiate a number of copies which exceeds totalCopies (=" << totalCopies << std::endl;
+//        std::cout << " Exiting." << std::endl;
+//        exit(11);
+//      }
+//
+//
+//      G4double zPos = (bgoLength-calorThickness)/2.;
+//      G4double miniGap = 1.5*mm;
+//      G4double xPos = ix*(calorSizeXY + miniGap) ;
+//      G4double yPos = iy*(calorSizeXY + miniGap) + sin(fRotation*3.14159265359/180.)*( zPos + fZtraslation) ;
+//
+//
+//      new G4PVPlacement(
+//                     rotation,                // no rotation
+//                     G4ThreeVector(xPos, yPos, cos(-fRotation*3.14159265359/180.)*(zPos + fZtraslation)  - sin(fRotation*3.14159265359/180.)*( iy*(calorSizeXY + miniGap))),  // at (0,0,0)
+//                     bgoLV,          // its logical volume                         
+//                     "BGOChannel",    // its name
+//                     labLV,          // its mother  volume
+//                     false,            // no boolean operation
+//                     copyNumber,                // copy number
+//                     fCheckOverlaps);  // checking overlaps 
+//
+//
+//      copyNumber += 1;
+//
+//    }
+//  }
+      
+
+  int copyNumber = 1;
+  int totalCopies = 25;
+
   for( int ix=-2; ix<=2; ++ix ) {
-
-    for( int iy=-2; iy<=2; ++iy ) {
-
-
+    for( int iy=-1; iy<=1; ++iy ) {
       if( ix==0 && iy==0 ) continue;  // central channel is the shash
 
       if( copyNumber>=totalCopies ) {
         std::cout << "--> ERROR!! Trying to instantiate a number of copies which exceeds totalCopies (=" << totalCopies << std::endl;
         std::cout << " Exiting." << std::endl;
-        exit(11);
-      }
+        exit(11);  }
 
-
-      G4double zPos = (bgoLength-calorThickness)/2.;
       G4double miniGap = 1.5*mm;
+
+
+      //  G4double yPos = iy*(calorSizeXY/2.-0.696) + sin(fRotation*3.14159265359/180.)*sqrt(((fibreLength-calorThickness)/2.+calorThickness/2.)*((fibreLength-calorThickness)/2.+calorThickness/2) + xPos*xPos) ;
+
+      //    G4ThreeVector(xPos,yPos,  cos(-fRotation*3.14159265359/180.)*((fibreLength-calorThickness)/2.+calorThickness/2.)  - sin(fRotation*3.14159265359/180.)*(iy*(calorSizeXY/2.-0.696))    ), // its position
+
+
+      G4double zPos = (calorThickness-calorThickness)/2.;
       G4double xPos = ix*(calorSizeXY + miniGap) ;
       G4double yPos = iy*(calorSizeXY + miniGap) + sin(fRotation*3.14159265359/180.)*( zPos + fZtraslation) ;
+      G4double yPosPom = iy*(calorSizeXY + miniGap) + sin(fRotation*3.14159265359/180.)*sqrt( (zPos + fZtraslation -calorThickness/2.- pompomLength/2.)*(zPos + fZtraslation -calorThickness/2.- pompomLength/2.) + xPos*xPos) ;
+
+      if(iy==0 && ix==-1){
+	new G4PVPlacement(
+			  rotation,                // rotation
+			  G4ThreeVector(xPos, yPos, cos(-fRotation*3.14159265359/180.)*(zPos + fZtraslation)  - sin(fRotation*3.14159265359/180.)*( iy*(calorSizeXY + miniGap)) ),
+			  calorLV2,          // its logical volume                         
+			  "Calorimeter2",    // its name
+			  labLV,          // its mother  volume
+			  false,            // no boolean operation
+			  0,                // copy number
+			  fCheckOverlaps);  // checking overlaps 
+
+      }else{
+
+	if(ix<=0){
+	new G4PVPlacement(
+			  rotation,                // rotation
+			  G4ThreeVector(xPos, yPos, cos(-fRotation*3.14159265359/180.)*(zPos + fZtraslation)  - sin(fRotation*3.14159265359/180.)*( iy*(calorSizeXY + miniGap)) ),
+			  calorLV,          // its logical volume                         
+			  "Calorimeter",    // its name
+			  labLV,          // its mother  volume
+			  false,            // no boolean operation
+			  copyNumber,                // copy number
+			  fCheckOverlaps);  // checking overlaps 
+	
+	}else{
+
+	new G4PVPlacement(
+			  rotation,                // rotation
+			  G4ThreeVector(xPos, yPos, cos(-fRotation*3.14159265359/180.)*(zPos + fZtraslation)  - sin(fRotation*3.14159265359/180.)*( iy*(calorSizeXY + miniGap)) ),
+			  calorLV3,          // its logical volume                         
+			  "Calorimeter3",    // its name
+			  labLV,          // its mother  volume
+			  false,            // no boolean operation
+			  copyNumber,                // copy number
+			  fCheckOverlaps);  // checking overlaps 
 
 
+	}
+
+      }
+
+      //PomPom
       new G4PVPlacement(
-                     rotation,                // no rotation
-                     G4ThreeVector(xPos, yPos, cos(-fRotation*3.14159265359/180.)*(zPos + fZtraslation)  - sin(fRotation*3.14159265359/180.)*( iy*(calorSizeXY + miniGap))),  // at (0,0,0)
-                     bgoLV,          // its logical volume                         
-                     "BGOChannel",    // its name
-                     labLV,          // its mother  volume
-                     false,            // no boolean operation
-                     copyNumber,                // copy number
-                     fCheckOverlaps);  // checking overlaps 
+			rotation,                // no rotation
+			G4ThreeVector(xPos, yPosPom, cos(-fRotation*3.14159265359/180.)*(zPos + fZtraslation -calorThickness/2.- pompomLength/2.)  - sin(fRotation*3.14159265359/180.)*( iy*(calorSizeXY + miniGap)) ),
+			PompomLV,            // its logical volume                         
+			"Pompom",            // its name
+			labLV,          // its mother  volume
+			false,            // no boolean operation
+			0,                // copy number
+			fCheckOverlaps);  // checking overlaps 
+
+
+      //tyvek cover
+      G4VPhysicalVolume* TyvekCoverPV = new G4PVPlacement(
+							  rotation,                // no rotation
+							  G4ThreeVector(-calorSizeXY*ix , -calorSizeXY*iy,  cos(-fRotation*3.14159265359/180.)*( tyvekLength/2.) ), // its position
+							  TyvekCoverLV,            // its logical volume                         
+							  "TyvekCoverPV",            // its name
+							  labLV,          // its mother  volume
+							  false,            // no boolean operation
+							  0,                // copy number
+							  fCheckOverlaps);  // checking overlaps 
+      
 
 
       copyNumber += 1;
-
     }
   }
-      
+
+
 
   //
   // Always return the physical World
@@ -1661,18 +1988,39 @@ void EEShashDetectorConstruction::ConstructSDandField()
   //
   //
   // First the actual Shashlik:
+  //3x3 matrix around central channel
   EEShashCalorimeterSD* absSD 
     = new EEShashCalorimeterSD("AbsSD", "AbsHitsCollection", fNofLayers,1);
   SetSensitiveDetector("AbsLV",absSD);
+  
 
   EEShashCalorimeterSD* actSD 
     = new EEShashCalorimeterSD("ActSD", "ActHitsCollection", fNofLayers,1);
   SetSensitiveDetector("ActLV",actSD);
 
+  //central channel
+  EEShashCalorimeterSD* actSD2 
+    = new EEShashCalorimeterSD("ActSD2", "ActHitsCollection2", fNofLayers,1);
+  SetSensitiveDetector("ActLV2",actSD2);
+
+  EEShashCalorimeterSD* absSD2 
+    = new EEShashCalorimeterSD("AbsSD2", "AbsHitsCollection2", fNofLayers,1);
+  SetSensitiveDetector("AbsLV2",absSD2);
+
+  //remaining channels (aka the three channels on the left)
+  EEShashCalorimeterSD* actSD3 
+    = new EEShashCalorimeterSD("ActSD3", "ActHitsCollection3", fNofLayers,1);
+  SetSensitiveDetector("ActLV3",actSD3);
+
+  EEShashCalorimeterSD* absSD3 
+    = new EEShashCalorimeterSD("AbsSD3", "AbsHitsCollection3", fNofLayers,1);
+  SetSensitiveDetector("AbsLV3",absSD3);
+
+
   // then the surrounding BGO matrix:
-  EEShashCalorimeterSD* bgoSD 
-    = new EEShashCalorimeterSD("BgoSD", "BgoHitsCollection", fNofBGOs,-1);//use -1 if it is constructed with placement and not replica
-  SetSensitiveDetector("BGOLV",bgoSD);
+//  EEShashCalorimeterSD* bgoSD 
+//    = new EEShashCalorimeterSD("BgoSD", "BgoHitsCollection", fNofBGOs,-1);//use -1 if it is constructed with placement and not replica
+//  SetSensitiveDetector("BGOLV",bgoSD);
 
   // then the fibres
   EEShashCalorimeterSD* fibrSDCore 

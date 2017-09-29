@@ -5,13 +5,13 @@ INCDIR   = interface
 SRCDIR   = src
 OBJDIR   = lib
 BINDIR   = bin
-TESTDIR  = test
+TESTDIR  = codes/makeBin
 
 
 SOURCES  := $(wildcard $(SRCDIR)/*.cc)
 OBJECTS  := $(SOURCES:$(SRCDIR)/%.cc=$(OBJDIR)/%.o)
 
-INCLUDES = -I. -I$(ROOTSYS)/include -I../ -I./interface -I/shome/micheli/H4_2015/CommonTools/interface 
+INCLUDES = -I. -I$(ROOTSYS)/include -I../ -I./interface# -I/shome/micheli/H4_2015/CommonTools/interface 
 
 ROOTSYS ?= ERROR_RootSysIsNotDefined
 
@@ -20,8 +20,8 @@ ROOTFLAG = `${ROOTSYS}/bin/root-config --cflags --libs`
 EXTRALIBS := -L$(ROOTSYS)/lib -Wl,--no-as-needed $(ROOTGLIBS) -lHtml -lMathCore -lGenVector -lMinuit -lTMVA -lRooFit `xml2-config --cflags` `xml2-config --libs` -std=c++11
 
 
-CPP =  $(wildcard test/*.cpp)
-CPPOBJ = $(patsubst test/%,%,$(CPP))
+CPP =  $(wildcard codes/makeBin/*.cpp)
+CPPOBJ = $(patsubst codes/makeBin/%,%,$(CPP))
 BINOBJ	=$(patsubst %.cpp,bin/%,$(CPPOBJ))
 COMMONTOOLSDIR=/shome/micheli/H4_2015/CommonTools/src/
 COMMONTOOLSDIRINC=/shome/micheli/H4_2015/CommonTools/interface
@@ -31,7 +31,7 @@ COMMONTOOLSOBJ =$(patsubst /shome/micheli/H4_2015/CommonTools/src/%.cc,lib/%.o,$
 
 all: $(BINOBJ) 
 
-$(BINDIR)/% : test/%.cpp $(OBJECTS)  $(COMMONTOOLSOBJ)  
+$(BINDIR)/% : codes/makeBin/%.cpp $(OBJECTS)  $(COMMONTOOLSOBJ)  
 	@echo "Compiling $@"
 	@echo $(CC) $(INCLUDES) -o $@ $<  $(ROOTFLAG) $(EXTRALIBS) $(OBJECTS) $(COMMONTOOLSOBJ)	
 	@$(CC) $(INCLUDES) -o $@ $<  $(ROOTFLAG) $(EXTRALIBS) $(OBJECTS) $(COMMONTOOLSOBJ)	

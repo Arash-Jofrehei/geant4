@@ -17,3 +17,5 @@
 *.eps
 
 .#*
+
+EEShashlikSimulation/matrix_simple*

@@ -2,7 +2,7 @@
 
 int main( int argc, char* argv[] ) {
 
-  DrawTools::setStyle();
+  //DrawTools::setStyle();
 
   std::string setup = "WLS";
   std::string energy = "50GeV";

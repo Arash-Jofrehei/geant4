@@ -19,7 +19,7 @@
 #include <TFile.h>
 
 #include "Waveform.h"
-#include "DrawTools.h"
+//#include <Drawtools.h>
 
 #include "TCanvas.h"
 #include "TFile.h"
@@ -59,8 +59,8 @@
 #include <algorithm>
 
 //for fft
-#include "Waveform.h"
-#include "FFTConvolution.h"
+#include "/afs/cern.ch/work/a/ajofrehe/cern-summer-2016/geant4/Analyzer/interface/Waveform.h"
+#include "/afs/cern.ch/work/a/ajofrehe/cern-summer-2016/geant4/Analyzer/interface/FFTConvolution.h"
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 

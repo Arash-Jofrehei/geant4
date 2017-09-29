@@ -536,8 +536,8 @@ void Analyzer::fitHisto(TH1F* histo, TVectorD* res, TVectorD* resErr,bool isEner
   lego->SetFillColor(0);
   lego->Draw("same");
   
-  TPaveText* pave = DrawTools::getLabelTop_expOnXaxis(energy_+" Electron Beam");
-  pave->Draw("same");
+  //TPaveText* pave = DrawTools::getLabelTop_expOnXaxis(energy_+" Electron Beam");
+  //pave->Draw("same");
 
   cans->SaveAs(outDir_+histo->GetName()+"_cruijff_fit.png");
   cans->SaveAs(outDir_+histo->GetName()+"_cruijff_fit.pdf");

@@ -99,15 +99,6 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
             
 
       
-      if(nStep==1){
-	float quantumEfficiency=0.15;//average value of qe
-	float mirroringGain=0.25;//mirroring a fibre at one end gives 25% light more (theoretical max is 50%)
-    
-	bool saveEvent=false;
-	float rndNum=randomGen->Uniform( 0.,1. );
-	if(rndNum<(quantumEfficiency*(1+mirroringGain)))saveEvent=true;
-	if(!saveEvent)	theTrack->SetTrackStatus(fStopAndKill);
-      }
 
       //FUCK IT Let's just kill them before they bounce that much...
       if( nStep>6 && theTrack->GetLogicalVolumeAtVertex()->GetName().contains("Act")){
@@ -179,6 +170,17 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
       // count photons at fiber exit
       if(  thePrePVName.contains("Grease")&& copyNo==0 )	{
 
+    	float quantumEfficiency=0.25;//average value of qe
+	float mirroringGain=0.25;//mirroring a fibre at one end gives 25% light more (theoretical max is 50%)
+	
+	bool keepPhot=false;
+	float rndNum=randomGen->Uniform( 0.,1. );
+	if(rndNum<(quantumEfficiency*(1+mirroringGain)))keepPhot=true;
+	if(!keepPhot){
+	  theTrack->SetTrackStatus(fStopAndKill);
+	  return;
+	}
+
     /*
     // Default way of returning is simply MeV's
     cout << "Doing theTrack->GetTotalEnergy():" << G4endl;
@@ -204,6 +206,8 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 	}
 
 	fibre0 += 1;
+
+
 
 
       //std::cout << "EOpt_0 = " << EOpt_0 << std::endl;
