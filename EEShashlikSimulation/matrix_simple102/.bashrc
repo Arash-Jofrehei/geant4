@@ -1,1 +1,0 @@
-alias root = root -l rootlogon.C;
